@@ -13,21 +13,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val viewModel = (application as App).viewModel
 
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val actionButton = findViewById<Button>(R.id.actionButton)
         val titleTextView = findViewById<TextView>(R.id.titleTextView)
 
         actionButton.setOnClickListener {
-            titleTextView.visibility = View.GONE
-            actionButton.isEnabled = false
-            progressBar.visibility = View.VISIBLE
+            viewModel.load()
+        }
 
-            Handler(Looper.getMainLooper()).postDelayed(Runnable {
-                titleTextView.visibility = View.VISIBLE
-                actionButton.isEnabled = true
-                progressBar.visibility = View.GONE
-            }, 3500)
+        viewModel.liveData().observe(this) {
+            it.apply(titleTextView, actionButton, progressBar)
         }
     }
 }
